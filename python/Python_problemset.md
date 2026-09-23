@@ -11,10 +11,23 @@ Please post your answers to the discussion board to share with other students.
 support and try to figure them out yourself. Having AI or another student do
 this for you will not help you learn. You must do the learning yourself!
 
+**NOTE(Ziyi)**: My sample solutions do not guarantee to have complete answers
+to any short answer questions, e.g. Question 1. There are more of
+guidelines and hints.
+
 ## Question 1
 
 In your own words, explain to a beginning CMPT 120 student what a **list
 comprehension** is in Python. How is it related to mathematical set notation?
+
+The list comprehension is a notation, compared to list literals, that allows
+you to express the content of a list declaratively.
+
+1. Explain what is List literals: `[1, 2, 3]`, `["ziyi", "yan", "sfu", "python"]`.
+2. Draw a connection between list comprehension and math notation of a set/list:
+    a. Math notation of sets/lists: $\\{x^2 : x \in \\{1, 2, 3, 4, 5 \\} \\}$.
+    b. Python List Comprehension: `[x**2 for x in [1, 2, 3, 4, 5]]`.
+3. Refer to the official docs: https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions
 
 ## Question 2
 
@@ -23,31 +36,80 @@ Write list comprehensions to do the following:
 - Make a list of all the numbers from 1 to 100 that are multiples of 5, e.g.
   `[5, 10, 15, ...]`.
 
+```python
+[x for x in range(100) if x % 5 == 0]
+```
+
 - Remove from a given list all the strings of even length.
+
+```python
+strs = ['a', 'ab', 'abc', 'ziyi', 'cmpt']
+[s for s in strs if len(s) % 2 != 0]
+```
 
 - Remove from a given list all the 0s, *add* 1 to all negative numbers, and
   *subtract* 1 from all positive numbers. For instance, `[0, 2, -2, 0, -3]`
   becomes `[1, -1, -2]`.
 
+```python
+xs = [0, 2, -2, 0, -3]
+[x+1 if x < 0 else x-1 for x in xs if x != 0]
+```
+
 - Make a list of all 4-bit tuples, e.g. `[(0,0,0,0), (0, 0, 0, 1), (0, 0, 1, 0), ...]`.
+
+```python
+[(w, x, y, z) for w in range(2) for x in range(2) for y in range(2) for z in range(2)]
+```
 
 - Given three lists, generate all 3-tuples of `(a, b, c)` where `a` is from the
   first list, `b` is from the second list, `c` is from the third list, and `a`,
   `b`, and `c` are all different.
+
+```python
+A = [1, 2, 3]
+B = [1, 4, 5]
+C = [1, 3, 5]
+[(a, b, c) for a in A for b in B for c in C if a != b if b != c if a != c]
+```
 
 - Make a list of all integer solutions to the equation `a^2 + b^2 = c^2`. Assume
   `a`, `b`, and `c` are all integers between 1 and 100, and `a < b < c`. Write
   each solution as a tuple `(a, b, c)`. The list starts and ends with: `[(3, 4,
   5), (5, 12, 13), (6, 8, 10), ..., (60, 80, 100), (65, 72, 97)]`.
 
+```python
+[(a, b, c) for a in range(100) for b in range(100) for c in range(100) if a < b < c if a**2 + b**2 == c**2]
+```
+
 ## Question 3
 
 In Python, what is the **walrus operator**? What is used for? Give an example.
+
+The walrus operator is used to eliminate unnecessary computation.
+
+If there are computations happening in the if-condition evaluation,
+the results can be saved and used in the final outputs.
+
+Example from lecture notes:
+```python
+high_scores = [(n, score)
+               for n in all_names 
+               if (score := get_score(n)) % 5 != 0  # walrus operator used here
+              ]
+```
+
+Refer to lecture notes: https://github.com/tjd1234/cmpt383fall2026/blob/main/python/README.md#the-walrus-operator
 
 ## Question 4
 
 a) Write a function called `my_zip2(A, B)` that takes two lists, `A` and `B`, of
 the same size. It should return a list of tuples just like `zip`.
+
+```python
+def my_zip2(A, B):
+    return [(A[i], B[i]) for i in range(min(len(A), len(B))]
+```
 
 b) Using `my_zip2` and `sum`, show how to calculate the **dot product** of two
 lists of numbers. Assume the lists are non-empty, only contain numbers, and have
@@ -55,16 +117,46 @@ the same length.
 
 For example, the dot product of `[1, 2, 3]` and `[4, 5, 6]` is `1*4 + 2*5 + 3*6
 = 32`.
+```python
+A = [1, 2, 3]
+B = [4, 5, 6]
+sum(a * b for (a, b) in my_zip2(A, B))
+```
 
 c) Write a function called `my_zip(L1, L2, ..., Ln)` that takes $n \geq 2$ lists
 (all the same size) as input and returns a list of tuples just like `zip`. If
 $n$ is less than 2, then raise a `ValueError`.
+
+```pyhton
+# variadic function
+def my_zip(*lsts):
+    if len(lsts) < 2:
+        raise ValueError
+    min_len = min(len(lst) for lst in lsts)
+    zipped = []
+    for i in range(min_len):
+        row = []
+        for lst in lsts:
+            row.append(lst[i])
+        zipped.append(tuple(row))
+    return zipped
+
+for i in my_zip([1, 2, 3], [4, 5, 6], [7, 8, 9, 10]): print(i)
+for i in zip([1, 2, 3], [4, 5, 6], [7, 8, 9, 10]): print(i)
+```
 
 d) Using `my_zip`, write a function called `add_lists(L1, L2, ..., Ln)` that
 adds lists `L1` to `Ln` element-wise. You can assume they are all the same size
 (and non-empty), and all list of numbers.
 
 For example, `add_lists([1, 2, 3], [4, 5, 6], [1, 1, 1])` should return `[6, 8, 10]`.
+
+```python
+def add_lists(*lsts):
+    return [sum(row) for row in my_zip(*lsts)]
+
+add_lists([1, 2, 3], [4, 5, 6], [1, 1, 1])
+```
 
 ## Question 5
 
@@ -75,9 +167,27 @@ Make a few variations of this function, at least:
 
 - One that uses a loop (and `enumerate`).
 
+```python
+def make_numbered_list(lst):
+    for idx, elem in enumerate(lst):
+        print("{}. {}".format(idx+1, elem))
+```
+
 - One that uses list comprehensions (and `enumerate`).
 
+```python
+def make_numbered_list(lst):
+    numbered = ["{}. {}".format(idx+1, elem) for idx, elem in enumerate(lst)]
+    for row in numbered:
+        print(row)
+```
+
 - One whose body is as short as possible (i.e. a single `return` statement).
+
+```python
+def make_numbered_list(lst):
+    return [print("{}. {}".format(idx+1, elem)) for idx, elem in enumerate(lst)]
+```
 
 
 For example:
@@ -104,10 +214,32 @@ numbers or all strings.
 For example, `get_max([4, 8, 4, 1])` should return 8, and `get_max(['soap',
 'cat', 'dog'])` should return `'soap'`.
 
+```python
+def get_max(lst):
+    if isinstance(lst[0], str):
+        max_str = len(lst[0])
+        max_idx = 0
+        for idx, s in enumerate(lst):
+            if len(s) > max_str:
+                max_str = len(s)
+                max_idx = idx
+        return lst[max_idx]
+    else:
+        return max(lst)
+
+# using built-in max() with customized key function
+def get_max(lst):
+    return max(lst, key=lambda elem: len(elem) if isinstance(elem, str) else elem)
+```
+
 ## Question 7
 
 In your own words, explain Python's **iterator protocol**. What are the methods
 required? What happens when there is no more data to iterate over?
+
+1. Iterator protocol is a set of methods that a iterator need to have to be qualified as a iterator.
+   List the method and explain the semantics of each. Refer to the lecture notes.
+2. `next()` will throw a iterator-specific error: `StopIteration`
 
 ## Question 8
 
@@ -129,10 +261,34 @@ a
 c
 ```
 
+```python
+class My_reversed:
+    def __init__(self, s):
+        self.s = s
+        self.index = len(s)
+    
+    def __iter__(self):
+        return self
+    
+    def __next__(self):
+        if self.index > 0:
+            self.index -= 1
+            return self.s[self.index]
+        else:
+            raise StopIteration
+```
+
 ## Question 9
 
 In your own words, explain to another programmer what it means that Python
 strings are **iterable** but not **iterators**.
+
+iterable and iterator are specific concepts in Python. Only a object that meets the iterable/iterator protocol is a iterable/iterator.
+
+Python doc of definiton of iterator and iterable:
+https://docs.python.org/3/glossary.html#term-iterator
+https://docs.python.org/3/glossary.html#term-iterable
+
 
 ## Question 10
 
@@ -154,6 +310,22 @@ should output:
 2 c
 ```
 
+```python
+class My_enumerate:
+    def __init__(self, lst):
+        self.lst = lst
+        self.idx = 0
+    def __iter__(self):
+        return self
+    def __next__(self):
+        if self.idx < len(self.lst):
+            t = (self.idx, self.lst[self.idx])
+            self.idx += 1
+            return t
+        else:
+            raise StopIteration
+```
+
 ## Question 11
 
 Write a **generator function** (using `yield`) to make your own version of each
@@ -161,10 +333,24 @@ of these built-in functions:
 
 - `my_range_gen(a, b)` works the same as `range(a, b)`, i.e. it generates the
   numbers from `a`, `a + 1`, `a + 2`, ..., `b - 1`.
+
+```python
+def my_range_gen(a, b):
+    curr = a
+    while curr < b:
+        yield curr
+        curr += 1
+```
   
 - `my_zip2_gen(A, B)` works the same as `zip(A, B)`, i.e. it generates the pairs
   of elements from `A` and `B`. You can assume `A` and `B` are lists of the same
   length, there are only two lists.
+
+```python
+def my_zip2_gen(a, b):
+    for i in range(len(a)):
+        yield a[i], b[i]
+```
 
 ## Question 12
 
@@ -184,6 +370,13 @@ hamster
 bird
 ```
 
+```python
+def longer_than_gen(n, lst):
+    for s in lst:
+        if len(s) > n:
+            yield s
+```
+
 ## Question 13
 
 Write a generator function (using `yield`) called `lines_of_file_gen(filename)`
@@ -200,7 +393,7 @@ Never mind. It's pointless.
 Then:
 
 ```python
-for i, line in lines_of_file_gen('joke.txt'):
+for i, line in lines_of_file_gen('jokes.txt'):
     print(f'{i + 1}: {line}')
 ```
 
@@ -211,6 +404,14 @@ Should print:
 2: A broken pencil.
 3: A broken pencil who?
 4: Never mind. It's pointless.
+```
+
+```python
+def lines_of_file_gen(filename):
+    with open(filename) as f:
+        for i, line in enumerate(f):
+            line = line.strip()
+            yield i, line
 ```
 
 ## Question 14
@@ -232,10 +433,29 @@ print(is_teen(12)) # False
 print(is_teen(20)) # False
 ```
 
+```python
+def make_bounds_checker(min, max):
+    def checker(x):
+        return x > min and x < max
+    return checker
+```
+
 ## Question 15
 
 In your own words, explain to another programmer what a Python **decorator** is.
 Give an example of how to use one.
+
+A decorator is a function that takes another function as a input and return a modifed version of that function as an output.
+
+Usage:
+```
+# raw
+decorated = deco(fun)
+# with syntax sugar
+@deco
+def fun():
+    pass
+```
 
 ## Question 16
 
@@ -271,6 +491,16 @@ one True
 2 True
 [1, 2, 3] True
  True
+```
+
+```python
+def always_return_str(f):
+    def new_f(*args, **kwargs):
+        r = f(*args, **kwargs)
+        if not isinstance(r, str):
+            return str(r)
+        return r
+    return new_f
 ```
 
 ## Question 17
