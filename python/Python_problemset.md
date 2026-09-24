@@ -12,8 +12,8 @@ support and try to figure them out yourself. Having AI or another student do
 this for you will not help you learn. You must do the learning yourself!
 
 **NOTE(Ziyi)**: My sample solutions do not guarantee to have complete answers
-to any short answer questions, e.g. Question 1. There are more of
-guidelines and hints.
+to any short answer questions, e.g. Question 1. They are more of
+guidelines and hints for you to answer them with your own words.
 
 ## Question 1
 
@@ -55,6 +55,8 @@ strs = ['a', 'ab', 'abc', 'ziyi', 'cmpt']
 xs = [0, 2, -2, 0, -3]
 [x+1 if x < 0 else x-1 for x in xs if x != 0]
 ```
+
+`x if cond else y`: Python's conditional expression: https://docs.python.org/3/reference/expressions.html#conditional-expressions
 
 - Make a list of all 4-bit tuples, e.g. `[(0,0,0,0), (0, 0, 0, 1), (0, 0, 1, 0), ...]`.
 
@@ -140,6 +142,12 @@ def my_zip(*lsts):
             row.append(lst[i])
         zipped.append(tuple(row))
     return zipped
+
+# usage of a variadic function
+my_zip()
+# lsts: []
+my_zip(1, 2, 3)
+# lsts: [1, 2, 3]
 
 for i in my_zip([1, 2, 3], [4, 5, 6], [7, 8, 9, 10]): print(i)
 for i in zip([1, 2, 3], [4, 5, 6], [7, 8, 9, 10]): print(i)
